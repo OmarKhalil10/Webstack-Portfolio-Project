@@ -209,22 +209,6 @@ python request_main_v6.py
 1. index.html content
 2. <Response [200]>
 
-## Contributions
-
-Contributions and enhancements to **CA-MIL** are welcome! Feel free to fork the repository, make improvements, and submit pull requests.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](https://github.com/OmarKhalil10/Webstack-Portfolio-Project/blob/main/LICENSE) file for details.
-
-## Authors
-
-- [Omar Khalil](https://github.com/OmarKhalil10)
-
-## Contact
-
-If you have any questions or suggestions, please feel free to [contact me](mailto:omar.khalil498@gmail.com)
-
 
 ## Problems solved
 - [x] The problem we faced is choosing the right disease to work on as diseases vary in the methods that we use to diagnose them, and the data available to use in model training
@@ -245,3 +229,18 @@ If you have any questions or suggestions, please feel free to [contact me](mailt
 - [ ] choose an Email Marketing Platform to interact with subscribers with latest website related updates
 - [ ] work on improving our model algorithm to make better predictions and help in prevention of diseases. 
 
+## Contributions
+
+Contributions and enhancements to **CA-MIL** are welcome! Feel free to fork the repository, make improvements, and submit pull requests.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](https://github.com/OmarKhalil10/Webstack-Portfolio-Project/blob/main/LICENSE) file for details.
+
+## Authors
+
+- [Omar Khalil](https://github.com/OmarKhalil10)
+
+## Contact
+
+If you have any questions or suggestions, please feel free to [contact me](mailto:omar.khalil498@gmail.com)
