@@ -5,8 +5,7 @@
 ## Development Setup
 1. **Download the project starter code locally**
 ```
-git clone https://github.com/John0Isaac/Centralized-and-Automated-Medical-Image-Analysis-Laboratory.git
-cd Centralized-and-Automated-Medical-Image-Analysis-Laboratory
+git clone https://github.com/OmarKhalil10/Webstack-Portfolio-Project.git
 ```
 
 2. **Before and After editing your code, Use the commands below:**
