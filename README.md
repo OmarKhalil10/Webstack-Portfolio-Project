@@ -228,7 +228,12 @@ If you have any questions or suggestions, please feel free to [contact me](mailt
 
 
 ## Problems solved
-- [ ] convert .h5 models to .onnx
+- [x] The problem we faced is choosing the right disease to work on as diseases vary in the methods that we use to diagnose them, and the data available to use in model training
+- [x] The Second problem is collecting data we need the data to have some important features and it also must be recent because we need to train our model on the most recent chest radiography images to get more accurate prediction mutation rate
+- [x] After that we needed large number of images to be able to cover almost every scenario to achieve better prediction accuracy
+- [x] After that we faced is how we could train this model with this amount of data and we solve this problem by using Azure platform which provides us with higher compute sources to build and train our model.
+- [x] Finally, that we faced another problem as we wanted to use our trained model to send chest radiography images from our website and receive the result so we had to learn how to use the model.h file and the model history in our website backend to send and receive requests between the website and the model.
+- [x] convert .h5 models to .onnx to be able to push to production on GCP production environment.
  
 ## Future Work
 - [ ] validate emails sent using both news letter and contact us
@@ -239,3 +244,5 @@ If you have any questions or suggestions, please feel free to [contact me](mailt
 - [ ] store your users related files to Google Cloud Storage bucket and interact with it using APIs
 - [ ] create admin page that can be accessed via the website and used to edit website content
 - [ ] choose an Email Marketing Platform to interact with subscribers with latest website related updates
+- [ ] work on improving our model algorithm to make better predictions and help in prevention of diseases. 
+
