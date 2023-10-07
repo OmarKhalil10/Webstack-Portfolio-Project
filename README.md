@@ -116,20 +116,19 @@ docker push gcr.io/$MY_PROJECT_ID/camil:v1
 
 ### Container Registry Repository
 
-![Container Registry Repository](/static/docs/3.png)
+![Container Registry Repository](/static/documentation_files/repository.png)
 
 ### Docker image
 
-![Docker image](/static/docs/4.png)
+![Docker image](/static/documentation_files/docker_image.png)
 
 ### Docker image details
 
-![Docker image details](/static/docs/5.png)
-
+![Docker image details](/static/documentation_files/docker_image_datails.png)
 ## 5. Deploy a Docker image on Cloud Run
 
 ```
-gcloud run deploy ca-mil \
+gcloud run deploy camil \
  --image gcr.io/$MY_PROJECT_ID/camil:v1 \
  --region europe-west6 \
  --platform managed \
@@ -138,15 +137,21 @@ gcloud run deploy ca-mil \
  --max-instances 25
 ```
 
-### Cloud Run revision for dogbreedspotter
+### Cloud Run logs
 
-![Cloud Run](/static/docs/6.png)
+![Cloud Run](/static/documentation_files/cloud_run_logs.png)
 
 
 #### Use the gcloud run revisions list command to list all revisions of your Cloud Run service. Replace <SERVICE_NAME> with the name of your service.
 
 ```
-gcloud run revisions list --platform managed --region europe-west6 --service ca-mil --format="value(name)" | sort
+gcloud run revisions list --platform managed --region europe-west6 --service camil --format="value(name)" | sort
+```
+
+#### Output
+
+```
+camil-00001-lec
 ```
 
 #### Use the gcloud run revisions delete command to delete each of the old revisions. Replace <REVISION_NAME> with the name of each revision you want to delete. [If Any!]
@@ -161,15 +166,37 @@ You can run this command for each old revision you copied in the previos step
 #### Show the description of a specific revision in Google Cloud Run
 
 ```
-gcloud run revisions describe dog-breed-spotter-00019-5s2 \
+gcloud run revisions describe camil-00001-lec \
   --platform managed \
   --region europe-west6 \
+```
+
+#### Output
+
+```
++ Revision camil-00001-lec in region europe-west6
+ 
+Image:               gcr.io/ml-tf-398511/camil@sha256:ad752b73609fc1f872051485b172ec4358ba1a3bec6db03076b14a49aecae18c
+Port:                8080
+Memory:              8Gi
+CPU:                 2
+Service account:     220929236898-compute@developer.gserviceaccount.com
+Concurrency:         80
+Max Instances:       25
+Timeout:             300s
+Startup Probe:
+  TCP every 240s
+  Port:              8080
+  Initial delay:     0s
+  Timeout:           240s
+  Failure threshold: 1
+  Type:              Default
 ```
 
 ## 14. Check the Flask application on Cloud Run
 
 ```
-https://dog-breed-spotter-t6mbhrffxa-oa.a.run.app
+https://camil-ltnijdawbq-oa.a.run.app
 ```
 
 Or you send HTTPS requests to the Cloud Run instance for testing
@@ -178,9 +205,10 @@ Or you send HTTPS requests to the Cloud Run instance for testing
 python request_main_v6.py
 ```
 
-### The response can be found from the log on dog-breed-spotter-00019-5s2 instance on Cloud Run.
+#### Output
 
-![dog-breed-spotter-00019-5s2 logs](/static/docs/7.png)
+1. index.html content
+2. <Response [200]>
 
 ## Contributions
 
@@ -188,35 +216,26 @@ Contributions and enhancements to **CA-MIL** are welcome! Feel free to fork the 
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](https://github.com/OmarKhalil10/DogBreedSpotter/blob/main/LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](https://github.com/OmarKhalil10/Webstack-Portfolio-Project/blob/main/LICENSE) file for details.
 
 ## Authors
 
-- [Omar Khalil]
+- [Omar Khalil](https://github.com/OmarKhalil10)
 
 ## Contact
 
-If you have any questions or suggestions, please feel free to [contact me](mailto:omar.khalil498@gmail.com).
+If you have any questions or suggestions, please feel free to [contact me](mailto:omar.khalil498@gmail.com)
 
 
-### NOTE:
-We shall build the Docker image and push it to Container Registry on GCP. The service name is defined as camil with tag v1
-
-1. Authenticating with existing credentials
-```
-docker login
-```
-
-2. Build your docker image
-```
-./run_docker.sh
-```
-
-
-
+## Problems solved
+- [ ] convert .h5 models to .onnx
+ 
 ## Future Work
 - [ ] validate emails sent using both news letter and contact us
 - [ ] make muiltiple version of the logo with multiple sizes to fix different screen sizes
 - [ ] create a database with all required data about vaccination centers, doctors, pharmacies and hospitals
 - [ ] add a 2 tables to this database, one for contact us and another one for our news letter subscipers
 - [ ] add more detectors for diseases like ones mentioned in the sides for future work
+- [ ] store your users related files to Google Cloud Storage bucket and interact with it using APIs
+- [ ] create admin page that can be accessed via the website and used to edit website content
+- [ ] choose an Email Marketing Platform to interact with subscribers with latest website related updates
