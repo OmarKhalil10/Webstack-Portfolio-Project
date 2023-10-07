@@ -76,3 +76,5 @@ urllib3==1.25.11
 Werkzeug==2.0.0
 wrapt==1.12.1
 zipp==3.11.0
+tf2onnx
+onnxruntime

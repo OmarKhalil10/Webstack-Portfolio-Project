@@ -436,6 +436,8 @@
         }).then(function (jsonResponse) {
             if (jsonResponse['success'] == true) {
                 console.log();
+                // Show a pop-up alert to thank the user
+                alert('Thank you for subscribing to our newsletter!');
             }
         }).catch(function (error) {
             console.log();

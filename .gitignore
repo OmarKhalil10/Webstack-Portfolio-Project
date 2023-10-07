@@ -132,13 +132,16 @@ dmypy.json
 .vscode/
 /.vs/
 
-vars.env
-
 csr.txt
 certificate.txt
 private_key.txt
 
 *.h5
 
+# enviroment variables
+vars.env
+
 # models
-models/
+model_onnx_higher_opset/
+models_h5/
+models_onnx/

@@ -4,6 +4,8 @@ from flask_cors import CORS
 from flask_mail import Mail, Message
 from sqlalchemy import or_
 # from models import setup_db
+import tf2onnx
+import onnxruntime as rt
 import numpy as np
 import json
 import requests
@@ -345,16 +347,20 @@ def create_app(test_config=None):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
             model_path = os.path.join(os.getcwd(), app.config['COVID19_PATH'])
-            model =  tf.keras.models.load_model(model_path)
-            
             path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            img = image.load_img(path, target_size=(200, 200))
-            img=image.img_to_array(img)
-            img /= 255
-            img=np.expand_dims(img, axis=0)
-            img = np.vstack([img])
-            
-            classes = model.predict(img, batch_size=10)
+
+            # Using H5 model
+
+            # model =  tf.keras.models.load_model(model_path)
+            # img = image.load_img(path, target_size=(200, 200))
+            # img=image.img_to_array(img)
+            # img /= 255
+            # img=np.expand_dims(img, axis=0)
+            # img = np.vstack([img])
+            # classes = model.predict(img, batch_size=10)
+            # percentage = round(classes[0][0] * 100, 2)
+
+            # Using deployed ONNX model seperately
 
             # uri = app.config['COVID19_URI']
             # api_key = app.config['COVID19_API_KEY']
@@ -364,7 +370,19 @@ def create_app(test_config=None):
             # data = json.loads(response.text)["output_image"]
             # classes = np.array(data, dtype=np.float32)
 
+            # Using ONNX model
+
+            sess = rt.InferenceSession(model_path)
+            img = image.load_img(path, target_size=(200, 200))
+            img=image.img_to_array(img)
+            img /= 255
+            img=np.expand_dims(img, axis=0)
+            img = np.vstack([img])
+            img = img if isinstance(img, list) else [img]
+            feed = dict([(input.name, img[n]) for n, input in enumerate(sess.get_inputs())])
+            classes = sess.run(None, feed)[0]
             percentage = round(classes[0][0] * 100, 2)
+
             if classes[0]>0.5:
                 prediction = "Positive"
             else:
@@ -391,17 +409,21 @@ def create_app(test_config=None):
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-            model_path = os.path.join(os.getcwd(), app.config['COVID19_PATH'])
-            model =  tf.keras.models.load_model(model_path)
-            
+            model_path = os.path.join(os.getcwd(), app.config['COVID19_PATH'])            
             path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            img = image.load_img(path, target_size=(200, 200))
-            img=image.img_to_array(img)
-            img /= 255
-            img=np.expand_dims(img, axis=0)
-            img = np.vstack([img])
-            
-            classes = model.predict(img, batch_size=10)
+
+            # Using H5 model
+
+            # model =  tf.keras.models.load_model(model_path)
+            # img = image.load_img(path, target_size=(200, 200))
+            # img=image.img_to_array(img)
+            # img /= 255
+            # img=np.expand_dims(img, axis=0)
+            # img = np.vstack([img])
+            # classes = model.predict(img, batch_size=10)
+            # percentage = round(classes[0][0] * 100, 2)
+
+            # Using deployed ONNX model seperately
 
             # uri = app.config['COVID19_URI']
             # api_key = app.config['COVID19_API_KEY']
@@ -411,7 +433,19 @@ def create_app(test_config=None):
             # data = json.loads(response.text)["output_image"]
             # classes = np.array(data, dtype=np.float32)
             
+            # Using ONNX model
+            
+            sess = rt.InferenceSession(model_path)
+            img = image.load_img(path, target_size=(200, 200))
+            img=image.img_to_array(img)
+            img /= 255
+            img=np.expand_dims(img, axis=0)
+            img = np.vstack([img])
+            img = img if isinstance(img, list) else [img]
+            feed = dict([(input.name, img[n]) for n, input in enumerate(sess.get_inputs())])
+            classes = sess.run(None, feed)[0]
             percentage = round(classes[0][0] * 100, 2)
+
             if classes[0]>0.5:
                 prediction = "ايجابي"
             else:
@@ -439,15 +473,32 @@ def create_app(test_config=None):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
             model_path = os.path.join(os.getcwd(), app.config['LUNG_CANCER_PATH'])
-            model =  tf.keras.models.load_model(model_path)
-
             path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             categories = ['Bengin case', 'Malignant case', 'Normal case']
-            img = image.load_img(path, target_size=(256, 256))
-            img=image.img_to_array(img)
-            img=np.expand_dims(img, axis=0)
-    
-            pred = model.predict(img)
+
+            # Using H5 model
+            # model =  tf.keras.models.load_model(model_path)
+            # img = image.load_img(path, target_size=(256, 256))
+            # img=image.img_to_array(img)
+            # img=np.expand_dims(img, axis=0)
+            # pred = model.predict(img)
+            # max_index = np.argmax(pred)
+            # max_index = np.argmax(pred)
+            # percentage = round(100 * pred[0][max_index], 2)
+            # output = categories[np.argmax(pred)]
+
+            # Using ONNX model
+
+            sess = rt.InferenceSession(model_path)
+            img = image.load_img(path, target_size=(256, 256))          
+            img = image.img_to_array(img)
+            img = np.expand_dims(img, axis=0)
+            img = img if isinstance(img, list) else [img]
+            feed = dict([(input.name, img[n]) for n, input in enumerate(sess.get_inputs())])
+            pred = sess.run(None, feed)[0]
+            max_index = np.argmax(pred)
+            percentage = round(100 * pred[0][max_index], 2)
+            output = categories[np.argmax(pred)]
 
             # uri = app.config['LUNG_CANCER_URI']
             # api_key = app.config['LUNG_CANCER_API_KEY']
@@ -456,12 +507,8 @@ def create_app(test_config=None):
             # response = requests.post(uri, headers=headers, data=request_data)
             # data = json.loads(response.text)["output_image"]
             # pred = np.array(data, dtype=np.float32)
+            # max_index = np.argmax(pred)
 
-            max_index = np.argmax(pred)
-            # Convert the greatest number to percentage
-            percentage = round(100 * pred[0][max_index], 2)
-
-            output = categories[np.argmax(pred)]
             return jsonify({
                 'prediction': output,
                 'success': True,
@@ -484,17 +531,35 @@ def create_app(test_config=None):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
             model_path = os.path.join(os.getcwd(), app.config['LUNG_CANCER_PATH'])
-            model =  tf.keras.models.load_model(model_path)
 
             path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             categories = ['ورم حميد', 'ورم خبيث', 'سلبي']
 
-            img = image.load_img(path, target_size=(256, 256))
-            img=image.img_to_array(img)
-            img=np.expand_dims(img, axis=0)
+            # Using H5 model
 
-            pred = model.predict(img)
+            # model =  tf.keras.models.load_model(model_path)
+            # img = image.load_img(path, target_size=(256, 256))
+            # img=image.img_to_array(img)
+            # img=np.expand_dims(img, axis=0)
+            # pred = model.predict(img)
+            # max_index = np.argmax(pred)
+            # max_index = np.argmax(pred)
+            # percentage = round(100 * pred[0][max_index], 2)
+            # output = categories[np.argmax(pred)]
 
+            sess = rt.InferenceSession(model_path)
+            img = image.load_img(path, target_size=(256, 256))          
+            img = image.img_to_array(img)
+            img = np.expand_dims(img, axis=0)
+            img = img if isinstance(img, list) else [img]
+            feed = dict([(input.name, img[n]) for n, input in enumerate(sess.get_inputs())])
+            pred = sess.run(None, feed)[0]
+            max_index = np.argmax(pred)
+            percentage = round(100 * pred[0][max_index], 2)
+            output = categories[np.argmax(pred)]
+
+            # Using deployed ONNX model seperately
+            
             # uri = app.config['LUNG_CANCER_URI']
             # api_key = app.config['LUNG_CANCER_API_KEY']
             # headers = {'Content-Type':'application/json', 'Authorization':('Bearer '+ api_key)}
@@ -503,13 +568,6 @@ def create_app(test_config=None):
             # data = json.loads(response.text)["output_image"]
             # pred = np.array(data, dtype=np.float32)
 
-            max_index = np.argmax(pred)
-
-            max_index = np.argmax(pred)
-            # Convert the greatest number to percentage
-            percentage = round(100 * pred[0][max_index], 2)
-
-            output = categories[np.argmax(pred)]
             return jsonify({
                 'prediction': output,
                 'success': True,
@@ -532,14 +590,38 @@ def create_app(test_config=None):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
             model_path = os.path.join(os.getcwd(), app.config['PNEUMONIA_PATH'])
-            model =  tf.keras.models.load_model(model_path, custom_objects={'iou_bce_loss':iou_bce_loss, 'mean_iou': mean_iou, 'iou_loss': iou_loss})
-
             path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            img = image.load_img(path, target_size=(256, 256), color_mode="grayscale")
-            img = image.img_to_array(img)
-            img=np.expand_dims(img, axis=0)
+
+            # Using H5 model
+
+            # model =  tf.keras.models.load_model(model_path, custom_objects={'iou_bce_loss':iou_bce_loss, 'mean_iou': mean_iou, 'iou_loss': iou_loss})
+            # img = image.load_img(path, target_size=(256, 256), color_mode="grayscale")
+            # img = image.img_to_array(img)
+            # img=np.expand_dims(img, axis=0)
+            # classes = model.predict(img, batch_size=1)
+            # classes = np.squeeze(classes, axis=0)
+            # pred = resize(classes, (1024, 1024), mode='reflect')
+            # comp = pred[:, :, 0] > 0.5
+            # # apply connected components
+            # comp = measure.label(comp)
+            # # apply bounding boxes
+            # predictionString = ''
+            # prediction = 0
+            # percentage = 0
+            # prediction = "Negative"
+            # for region in measure.regionprops(comp):
+            #     # retrieve x, y, height and width
+            #     y, x, y2, x2 = region.bbox
+            #     height = y2 - y
+            #     width = x2 - x
+            #     # proxy for confidence score
+            #     conf = np.mean(pred[y:y+height, x:x+width])
+            #     # add to predictionString
+            #     predictionString += str(conf) + ' ' + str(x) + ' ' + str(y) + ' ' + str(width) + ' ' + str(height) + ' '
+            #     percentage = round(float(predictionString.split()[0]) * 100, 2)
+            #     prediction = "Positive"
             
-            classes = model.predict(img, batch_size=1)
+            # Using deployed ONNX model seperately
 
             # uri = app.config['PNEUMONIA_URI']
             # api_key = app.config['PNEUMONIA_API_KEY']
@@ -549,6 +631,15 @@ def create_app(test_config=None):
             # data = json.loads(response.text)["output_image"]
             # classes = np.array(data, dtype=np.float32)
 
+            # Using ONNX model
+
+            sess = rt.InferenceSession(model_path)
+            img = image.load_img(path, target_size=(256, 256), color_mode="grayscale")
+            img = image.img_to_array(img)
+            img=np.expand_dims(img, axis=0)
+            img = img if isinstance(img, list) else [img]
+            feed = dict([(input.name, img[n]) for n, input in enumerate(sess.get_inputs())])
+            classes = sess.run(None, feed)[0]
             classes = np.squeeze(classes, axis=0)
             pred = resize(classes, (1024, 1024), mode='reflect')
             comp = pred[:, :, 0] > 0.5
@@ -570,6 +661,7 @@ def create_app(test_config=None):
                 predictionString += str(conf) + ' ' + str(x) + ' ' + str(y) + ' ' + str(width) + ' ' + str(height) + ' '
                 percentage = round(float(predictionString.split()[0]) * 100, 2)
                 prediction = "Positive"
+
             return jsonify({
                 'prediction': prediction,
                 'success': True,
@@ -592,14 +684,38 @@ def create_app(test_config=None):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
             model_path = os.path.join(os.getcwd(), app.config['PNEUMONIA_PATH'])
-            model =  tf.keras.models.load_model(model_path, custom_objects={'iou_bce_loss':iou_bce_loss, 'mean_iou': mean_iou, 'iou_loss': iou_loss})
-
             path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            img = image.load_img(path, target_size=(256, 256), color_mode="grayscale")
-            img = image.img_to_array(img)
-            img=np.expand_dims(img, axis=0)
 
-            classes = model.predict(img, batch_size=1)
+            # Using H5 model
+
+            # model =  tf.keras.models.load_model(model_path, custom_objects={'iou_bce_loss':iou_bce_loss, 'mean_iou': mean_iou, 'iou_loss': iou_loss})
+            # img = image.load_img(path, target_size=(256, 256), color_mode="grayscale")
+            # img = image.img_to_array(img)
+            # img=np.expand_dims(img, axis=0)
+            # classes = model.predict(img, batch_size=1)
+            # classes = np.squeeze(classes, axis=0)
+            # pred = resize(classes, (1024, 1024), mode='reflect')
+            # comp = pred[:, :, 0] > 0.5
+            # # apply connected components
+            # comp = measure.label(comp)
+            # # apply bounding boxes
+            # predictionString = ''
+            # prediction = 0
+            # percentage = 0
+            # prediction = "سلبي"
+            # for region in measure.regionprops(comp):
+            #     # retrieve x, y, height and width
+            #     y, x, y2, x2 = region.bbox
+            #     height = y2 - y
+            #     width = x2 - x
+            #     # proxy for confidence score
+            #     conf = np.mean(pred[y:y+height, x:x+width])
+            #     # add to predictionString
+            #     predictionString += str(conf) + ' ' + str(x) + ' ' + str(y) + ' ' + str(width) + ' ' + str(height) + ' '
+            #     percentage = round(float(predictionString.split()[0]) * 100, 2)
+            #     prediction = "ايجابي"
+
+            # Using deployed ONNX model seperately
 
             # uri = app.config['PNEUMONIA_URI']
             # api_key = app.config['PNEUMONIA_API_KEY']
@@ -609,6 +725,15 @@ def create_app(test_config=None):
             # data = json.loads(response.text)["output_image"]
             # classes = np.array(data, dtype=np.float32)
 
+            # Using ONNX model
+
+            sess = rt.InferenceSession(model_path)
+            img = image.load_img(path, target_size=(256, 256), color_mode="grayscale")
+            img = image.img_to_array(img)
+            img=np.expand_dims(img, axis=0)
+            img = img if isinstance(img, list) else [img]
+            feed = dict([(input.name, img[n]) for n, input in enumerate(sess.get_inputs())])
+            classes = sess.run(None, feed)[0]
             classes = np.squeeze(classes, axis=0)
             pred = resize(classes, (1024, 1024), mode='reflect')
             comp = pred[:, :, 0] > 0.5
@@ -630,6 +755,7 @@ def create_app(test_config=None):
                 predictionString += str(conf) + ' ' + str(x) + ' ' + str(y) + ' ' + str(width) + ' ' + str(height) + ' '
                 percentage = round(float(predictionString.split()[0]) * 100, 2)
                 prediction = "ايجابي"
+
             return jsonify({
                 'prediction': prediction,
                 'success': True,
@@ -686,4 +812,4 @@ def create_app(test_config=None):
 app = create_app()
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=4040, debug=True)
+    app.run(host='0.0.0.0', port=8080, debug=True)

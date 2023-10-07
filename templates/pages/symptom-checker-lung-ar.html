@@ -434,6 +434,8 @@
         }).then(function (jsonResponse) {
             if (jsonResponse['success'] == true) {
                 console.log();
+                // Show a pop-up alert to thank the user
+                alert('شكرًا لك على الاشتراك في نشرتنا الإخبارية');
             }
         }).catch(function (error) {
             console.log();
