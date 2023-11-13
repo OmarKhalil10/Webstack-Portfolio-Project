@@ -1,5 +1,3 @@
-# Webstack-Portfolio-Project:This is the final project in my 12-month ALX Software Engineer Program 
-
 # Centralized-and-Automated-Medical-Image-Analysis-Laboratory
 
 ## Development Setup
